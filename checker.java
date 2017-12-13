@@ -16,13 +16,14 @@ public class checker {
 		SS = 0;
 	}
 	
-	public void run(int x, int y)
+	public void run(int x, int y, int mode)
 	{
 		group A = new group(x,y);
-		group twoA = A.operation(2);
-		quotientGroup ATWOA = new quotientGroup(A, twoA);
-		System.out.println("i am here");
+		//group twoA = A.operation(2);
+		//quotientGroup ATWOA = new quotientGroup(A, twoA);
+		//System.out.println("i am here");
 		
+		/**
 		if(!ATWOA.isomorphic())
 		{
 			System.out.println("A/2A is not isomorphic to Z2 * Z2.");
@@ -30,6 +31,7 @@ public class checker {
 		}
 		else
 		{
+		**/
 			System.out.println("A/2A is isomorphic to Z2 * Z2, we can continue.");
 			
 			ArrayList<group> B = new ArrayList<group>();
@@ -37,12 +39,15 @@ public class checker {
 			
 			for(element b : A.list)
 			{
-				group gb = A.generate(b);
-							
-				if(!B.contains(gb))
+				//if(b.order() == 16)
 				{
-					B.add(gb);
-				}			
+					group gb = A.generate(b);
+								
+					if(!B.contains(gb))
+					{
+						B.add(gb);
+					}
+				}
 			}
 			
 			for(group b : B)
@@ -61,21 +66,21 @@ public class checker {
 					{
 						quotients.add(AB);
 						AB.cyclicgroups = AB.generate();
-						//size++;
-						//size += AB.cyclicgroups.size();
 					}
 				}
 			}
 			
 			combination combo = new combination();
-			combo.generate(A, this);
+			combo.generate(A, this, mode);
 			
 			/**
+			System.out.println("for H: (4,0),(5,0),(5,1),(6,1).");
 			element[] sublist = new element[4];
-			sublist[0] = new element(10,10,2,0);
-			sublist[1] = new element(10,10,0,2);
-			sublist[2] = new element(10,10,2,2);
-			sublist[3] = new element(10,10,4,4);
+			sublist[0] = new element(8,2,0,0);
+			sublist[1] = new element(8,2,2,0);
+			sublist[2] = new element(8,2,2,1);
+			sublist[3] = new element(8,2,3,0);
+			
 			element h1 = sublist[0];
 			element ih1 = h1.inverse();
 			element h2 = sublist[1];
@@ -84,13 +89,12 @@ public class checker {
 			element ih3 = h3.inverse();
 			element h4 = sublist[3];
 			element ih4 = h4.inverse();
-			boolean success = false;
+			boolean success = true;
 			int outSize = this.quotients.size();
 			
-			for(int i = 0; i < outSize; i++)
+			outMost: for(int i = 0; i < outSize; i++)
 			{
 				quotientGroup q = this.quotients.get(i);
-				
 				ArrayList<quotientGroup> grouplist = q.cyclicgroups;
 				int innerSize = grouplist.size();
 				
@@ -106,15 +110,11 @@ public class checker {
 					int c4 = -4;
 					boolean b4 = false;
 					
-					int n = q.order;
-					int length = n/2;
-					
-					ArrayList<coset> cosets = quotient.list;
-					//ArrayList<HashTable<element>> tables = quotient.tables;
+					int length = q.order/2;
+
 					for(int o = 0; o <= length; o++)
 					{
-						//HashTable<element> table = tables.get(o);
-						coset C = cosets.get(o);
+						coset C = quotient.list.get(o);
 						if(!b1 && (C.contains(h1) || C.contains(ih1)))
 						{
 							c1 = o;
@@ -153,39 +153,180 @@ public class checker {
 					
 					doInsertionSort(insert);
 					
-					
-					if(insert[1] != insert[2])
+					if(insert[2] != insert[1])
 					{
-						success = false;
-						System.out.println("Set: " + h1 + h2 + h3 + h4);
-						System.out.println(insert[1] + "!=" + insert[2]);
-						System.out.println("B = <" + cosets.get(0).left + ">" + " a = " + 
-								cosets.get(1).list.get(0));
-						
-						//break outMost;
-					}
-					else
-					{
-						success = true;
+						System.out.println("B is: " + quotient.H + " " + " with a is: " + quotient.a
+								+ " "
+								+ insert[0] + " " + insert[1] + " "
+								+ insert[2] + " " + insert[3]);
+						break outMost;
 					}
 				}
 			}
-			
-			if(success)
+			**/
+			//prove(x,y);	
+		//}
+	}
+	
+	public void prove(int x, int y)
+	{
+		group g = new group(x,y);
+		ArrayList<element> orderEight = new ArrayList<element> ();
+		for(element e : g.list)
+		{
+			if(e.order() == 8)
 			{
-				element[] NSS = new element[4];
-				NSS[0] = sublist[0];
-				NSS[1] = sublist[1];
-				NSS[2] = sublist[2];
-				NSS[3] = sublist[3];
-				non_separating_set set = new non_separating_set(NSS);
-				
-
-					this.successful.add(set);
-					this.NSS++;
-
+				orderEight.add(e);
 			}
-			**/	
+		}
+		ArrayList<non_separating_set> successed = new ArrayList<non_separating_set>();
+		ArrayList<non_separating_set> failed = new ArrayList<non_separating_set>();
+		
+		for(int i = 0; i < orderEight.size(); i++)
+		{
+			
+			element current = orderEight.get(i);
+			for(int j = i + 1; j < orderEight.size(); j++)
+			{
+				element next = orderEight.get(j);
+				
+				if(current.inverse().equals(next))
+				{
+					continue;
+				}
+				else
+				{
+					element twoA = current.operation(current, 1);
+					element twoB = next.operation(next, 1);
+					if(twoA.equals(twoB)) // 2A = 2B
+					{
+						for(element e : g.list)
+						{
+							if(!e.equals(current) && !e.equals(current.inverse())
+									&& !e.equals(next) && !e.equals(next.inverse())) // we have A,B,C here
+							{
+								element D = e.operation(twoA, 1);
+								if(!D.equals(current) && !D.equals(current.inverse())
+										&& !D.equals(next) && !D.equals(next.inverse())
+										&& !D.equals(e) && !D.equals(e.inverse()))
+								{
+									element[] candidate = {current, next, e, D};
+									non_separating_set nss = new non_separating_set(candidate);
+									
+									element h1 = candidate[0];
+									element ih1 = h1.inverse();
+									element h2 = candidate[1];
+									element ih2 = h2.inverse();
+									element h3 = candidate[2];
+									element ih3 = h3.inverse();
+									element h4 = candidate[3];
+									element ih4 = h4.inverse();
+									boolean success = true;
+									int outSize = quotients.size();
+									outMost: for(int i1 = 0; i1 < outSize; i1++)
+									{
+										quotientGroup q = quotients.get(i1);
+										
+										ArrayList<quotientGroup> grouplist = q.cyclicgroups;
+										int innerSize = grouplist.size();
+										
+										for(int j1 = 0; j1 < innerSize; j1++)
+										{
+											quotientGroup quotient = grouplist.get(j1);
+											int c1 = -1;
+											boolean b1 = false;
+											int c2 = -2;
+											boolean b2 = false;
+											int c3 = -3;
+											boolean b3 = false;
+											int c4 = -4;
+											boolean b4 = false;
+											
+											int length = q.order/2;
+
+											for(int o = 0; o <= length; o++)
+											{
+												coset C = quotient.list.get(o);
+												if(!b1 && (C.contains(h1) || C.contains(ih1)))
+												{
+													c1 = o;
+													b1 = true;
+												}
+												
+												if(!b2 && (C.contains(h2) || C.contains(ih2)))
+												{
+													c2 = o;
+													b2 = true;
+												}
+												
+												if(!b3 && (C.contains(h3) || C.contains(ih3)))
+												{
+													c3 = o;
+													b3 = true;
+												}
+												
+												if(!b4 && (C.contains(h4) || C.contains(ih4)))
+												{
+													c4 = o;
+													b4 = true;
+												}
+												
+												if(b1 && b2 && b3 && b4)
+												{
+													break;
+												}
+											}
+											
+											int[] insert = new int[4];
+											insert[0] = c1;
+											insert[1] = c2;
+											insert[2] = c3;
+											insert[3] = c4;
+											
+											doInsertionSort(insert);
+											
+											
+											if(insert[1] != insert[2])
+											{
+												success = false;
+												break outMost;
+											}
+										}
+									}
+									
+									if(success)
+									{
+										if(!successed.contains(nss))
+										{
+											successed.add(nss);
+										}
+									}
+									else
+									{
+										if(!failed.contains(nss))
+										{
+											failed.add(nss);
+										};
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
+		}
+		
+		for(non_separating_set nss : successed)
+		{
+			System.out.println(nss + " is a nss."); 
+		}
+		for(non_separating_set nss : failed)
+		{
+			System.out.println(nss + " is not a nss.");
 		}
 	}
 	

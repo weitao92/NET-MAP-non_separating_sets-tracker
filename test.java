@@ -49,7 +49,7 @@ public class test {
 		
 		checker c = new checker();
 		long start = System.currentTimeMillis();
-		c.run(4,4);
+		c.run(6,6,1);
 		long elapsedTimeMillis = System.currentTimeMillis()-start;
 		int elapsedTimeHour = (int) (elapsedTimeMillis/(60*60*1000F));
 		int elapsedTimeMin = (int) ((elapsedTimeMillis - elapsedTimeHour * (60*60*1000F))/(60*1000F));
@@ -73,8 +73,7 @@ public class test {
 				writer.write("\n");
 			}
 		}
-
-		/**
+		
 		disjointedUnion u = new disjointedUnion(c.successful);
 		u.generate();
 		System.out.println(u.distinct.size());
@@ -82,29 +81,36 @@ public class test {
 		{
 			System.out.println(e.root + " is the root, the number of NSS in this equivalence class"
 					+ " is: " + e.num);
+			
+			for(non_separating_set nss : e.sets)
+			{
+				System.out.print(nss + " ");
+			}
+			System.out.println();
+			System.out.println();
 		}
 		
 		/**
-		mapping_6 map = new mapping_6();
+		mapping_48 map = new mapping_48();
 		//System.out.println(map.phase2.size());
 		
 		element[] H1 = new element[4];
-		H1[0] = new element(6,6,2,0);
-		H1[1] = new element(6,6,0,2);
-		H1[2] = new element(6,6,2,2);
-		H1[3] = new element(6,6,4,2);
+		H1[0] = new element(4,8,0,0);
+		H1[1] = new element(4,8,0,2);
+		H1[2] = new element(4,8,0,4);
+		H1[3] = new element(4,8,2,2);
 		non_separating_set h1 = new non_separating_set(H1);
 		element[] H2 = new element[4];
-		H2[0] = new element(6,6,1,0);
-		H2[1] = new element(6,6,0,1);
-		H2[2] = new element(6,6,5,1);
-		H2[3] = new element(6,6,2,2);
+		H2[0] = new element(4,8,0,0);
+		H2[1] = new element(4,8,1,0);
+		H2[2] = new element(4,8,1,4);
+		H2[3] = new element(4,8,2,0);
 		non_separating_set h2 = new non_separating_set(H2);
 		element[] H3 = new element[4];
-		H3[0] = new element(6,6,1,0);
-		H3[1] = new element(6,6,0,1);
-		H3[2] = new element(6,6,1,2);
-		H3[3] = new element(6,6,4,1);
+		H3[0] = new element(4,8,0,2);
+		H3[1] = new element(4,8,1,1);
+		H3[2] = new element(4,8,1,5);
+		H3[3] = new element(4,8,2,2);
 		non_separating_set h3 = new non_separating_set(H3);
 		
 		map.generate(h3);

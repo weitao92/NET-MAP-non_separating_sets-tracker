@@ -1,8 +1,109 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class combination {
-	int[] insert;
+	
+	static class thread extends Thread
+	{
+		element[] sublist;
+		int start;
+		int end;
+		checker c;
+		
+		public thread(element[] sublist, int s, int e, checker c)
+		{
+			this.sublist = sublist;
+			start = s;
+			end = e;
+			this.c = c;
+		}
+		
+		public void run()
+		{
+			element h1 = sublist[0];
+			element ih1 = h1.inverse();
+			element h2 = sublist[1];
+			element ih2 = h2.inverse();
+			element h3 = sublist[2];
+			element ih3 = h3.inverse();
+			element h4 = sublist[3];
+			element ih4 = h4.inverse();
+			
+			for(int i = start; i <= end && passed.get(); i++)
+			{
+				quotientGroup q = c.quotients.get(i);
+				ArrayList<quotientGroup> grouplist = q.cyclicgroups;
+				int innerSize = grouplist.size();
+				
+				for(int j = 0; j < innerSize && passed.get(); j++)
+				{
+					quotientGroup quotient = grouplist.get(j);
+					int c1 = -1;
+					boolean b1 = false;
+					int c2 = -2;
+					boolean b2 = false;
+					int c3 = -3;
+					boolean b3 = false;
+					int c4 = -4;
+					boolean b4 = false;
+					
+					int length = q.order/2;
+
+					for(int o = 0; o <= length; o++)
+					{
+						coset C = quotient.list.get(o);
+						if(!b1 && (C.contains(h1) || C.contains(ih1)))
+						{
+							c1 = o;
+							b1 = true;
+						}
+						
+						if(!b2 && (C.contains(h2) || C.contains(ih2)))
+						{
+							c2 = o;
+							b2 = true;
+						}
+						
+						if(!b3 && (C.contains(h3) || C.contains(ih3)))
+						{
+							c3 = o;
+							b3 = true;
+						}
+						
+						if(!b4 && (C.contains(h4) || C.contains(ih4)))
+						{
+							c4 = o;
+							b4 = true;
+						}
+						
+						if(b1 && b2 && b3 && b4)
+						{
+							break;
+						}
+					}
+					
+					
+					insert[0] = c1;
+					insert[1] = c2;
+					insert[2] = c3;
+					insert[3] = c4;
+					
+					doInsertionSort(insert);
+					
+					
+					if(insert[1] != insert[2])
+					{
+						 passed.set(false);
+					}
+				}
+			}
+		}
+	}
+	
+	static AtomicBoolean passed = new AtomicBoolean(true);
+	static int[] insert;
 	long num;
 	
 	public combination()
@@ -16,7 +117,7 @@ public class combination {
 	 * @param g
 	 * @return
 	 */
-	public void generate(group g, checker c)
+	public void generate(group g, checker c, int mode)
 	{
 		ArrayList<element> exist = g.list;
 		
@@ -28,12 +129,82 @@ public class combination {
 		}
 		System.out.println("Phase 1 is done.");
 		
-		combinationUtil(myList, c);
+		if(mode == 1)
+		{
+			findNSS(myList,c);
+		}
+		else
+		{
+			findCUS(myList, c);
+		}
+		/**
+		if(c.quotients.size() < 4)
+		{
+			combinationUtil(myList, c);
+		}
+		else
+		{
+			int mid = c.quotients.size()/4;
+			TwoThread(myList, c, mid);
+		}
+		**/
 	}
 	
-	private void combinationUtil(element arr[], checker c)
+	@SuppressWarnings("unused")
+	private void TwoThread(element arr[], checker c, int mid)
 	{
-		
+		element[] sublist = new element[4];
+		for(int x = 0; x <= arr.length - 4; x++)
+		{
+			sublist[0] = arr[x];
+			for(int y = x + 1; y <= arr.length - 3; y++)
+			{
+				sublist[1] = arr[y];
+				for(int z = y + 1; z <= arr.length - 2; z++)
+				{
+					sublist[2] = arr[z];
+					for(int l = z + 1; l <= arr.length - 1; l++)
+					{
+						sublist[3] = arr[l];
+						element[] newOne = Arrays.copyOf(sublist, 4);
+						passed.set(true);
+						thread t1 = new thread(sublist, 0, mid - 1, c);
+						thread t2 = new thread(newOne, mid, c.quotients.size()-1,c);
+						
+						t1.start();
+						t2.start();
+						try {
+							t1.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						try {
+							t2.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						if(passed.get())
+						{
+							element[] newList = new element[4];
+							for(int i = 0; i < 4; i++)
+							{
+								newList[i] = sublist[i];
+							}
+							non_separating_set set = new non_separating_set(newList);
+							c.successful.add(set);
+							c.NSS++;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void findNSS(element arr[], checker c)
+	{
 		element[] sublist = new element[4];
 		for(int x = 0; x <= arr.length - 4; x++)
 		{
@@ -63,31 +234,6 @@ public class combination {
 							outMost: for(int i = 0; i < outSize; i++)
 							{
 								quotientGroup q = c.quotients.get(i);
-								/**
-								coset B = q.identity;
-								int size1 = 0;
-								if(B.contains(h1) || B.contains(ih1))
-								{
-									size1++;
-								}
-								if(B.contains(h2) || B.contains(ih2))
-								{
-									size1++;
-								}
-								if(size1 <= 1 && B.contains(h3) || B.contains(ih3))
-								{
-									size1++;
-								}
-								if(size1 <= 1 && B.contains(h4) || B.contains(ih4))
-								{
-									size1++;
-								}
-								if(size1 > 1)
-								{
-									success = false;
-									break outMost;
-								}
-								**/
 								ArrayList<quotientGroup> grouplist = q.cyclicgroups;
 								int innerSize = grouplist.size();
 								
@@ -146,8 +292,123 @@ public class combination {
 									
 									doInsertionSort(insert);
 									
+									if(insert[2] != insert[1])
+									{
+										success = false;
+										break outMost;
+									}
+								}
+							}
+							
+							if(success)
+							{
+								element[] newList = new element[4];
+								for(int i = 0; i < 4; i++)
+								{
+									newList[i] = sublist[i];
+								}
+								non_separating_set set = new non_separating_set(newList);
+								c.successful.add(set);
+								c.NSS++;
+							}	
+					}
+				}
+			}
+		}
+	}
+	
+	private void findCUS(element arr[], checker c)
+	{
+		
+		element[] sublist = new element[4];
+		for(int x = 0; x <= arr.length - 4; x++)
+		{
+			sublist[0] = arr[x];
+			for(int y = x + 1; y <= arr.length - 3; y++)
+			{
+				sublist[1] = arr[y];
+				for(int z = y + 1; z <= arr.length - 2; z++)
+				{
+					sublist[2] = arr[z];
+					for(int l = z + 1; l <= arr.length - 1; l++)
+					{
+						sublist[3] = arr[l];
+							//num++;
+							
+							element h1 = sublist[0];
+							element ih1 = h1.inverse();
+							element h2 = sublist[1];
+							element ih2 = h2.inverse();
+							element h3 = sublist[2];
+							element ih3 = h3.inverse();
+							element h4 = sublist[3];
+							element ih4 = h4.inverse();
+							boolean success = true;
+							int outSize = c.quotients.size();
+
+							outMost: for(int i = 0; i < outSize; i++)
+							{
+								quotientGroup q = c.quotients.get(i);
+								ArrayList<quotientGroup> grouplist = q.cyclicgroups;
+								int innerSize = grouplist.size();
+								double d = q.H.order / 2.0;
+								
+								for(int j = 0; j < innerSize; j++)
+								{
+									quotientGroup quotient = grouplist.get(j);
+									int c1 = -1;
+									boolean b1 = false;
+									int c2 = -2;
+									boolean b2 = false;
+									int c3 = -3;
+									boolean b3 = false;
+									int c4 = -4;
+									boolean b4 = false;
 									
-									if(insert[1] != insert[2])
+									int length = q.order/2;
+
+									for(int o = 0; o <= length; o++)
+									{
+										coset C = quotient.list.get(o);
+										if(!b1 && (C.contains(h1) || C.contains(ih1)))
+										{
+											c1 = o;
+											b1 = true;
+										}
+										
+										if(!b2 && (C.contains(h2) || C.contains(ih2)))
+										{
+											c2 = o;
+											b2 = true;
+										}
+										
+										if(!b3 && (C.contains(h3) || C.contains(ih3)))
+										{
+											c3 = o;
+											b3 = true;
+										}
+										
+										if(!b4 && (C.contains(h4) || C.contains(ih4)))
+										{
+											c4 = o;
+											b4 = true;
+										}
+										
+										if(b1 && b2 && b3 && b4)
+										{
+											break;
+										}
+									}
+									
+									
+									insert[0] = c1;
+									insert[1] = c2;
+									insert[2] = c3;
+									insert[3] = c4;
+									
+									doInsertionSort(insert);
+
+									if((insert[2] - insert[1])/d >= 1.0)
 									{
 										success = false;
 										break outMost;
@@ -226,12 +487,6 @@ public class combination {
 		}
 		
 		list.removeAll(bad);
-		/**
-		list.remove(new element(module1, module2, 0, module2/2));
-		list.remove(new element(module1, module2, module1/2, 0));
-		list.remove(new element(module1, module2, module1/2, module2/2));
-		list.remove(new element(module1, module2, 0, 0));
-		**/
 	}
 
 }

@@ -17,7 +17,7 @@ public class disjointedUnion {
 			this.root = root;
 			num = 1;
 			sets = new ArrayList<non_separating_set>();
-			sets.add(root);
+			//sets.add(root);
 		}
 	}
 
@@ -50,7 +50,9 @@ public class disjointedUnion {
 				{
 					finished = false;
 					int index = bag.indexOf(s);
-					union[index] = i;
+					int root1 = rootOf(i);
+					int root2 = rootOf(index);
+					union[root2] = root1;
 				}
 			}
 			
@@ -68,7 +70,10 @@ public class disjointedUnion {
 			if(!temp.contains(root))
 			{
 				temp.add(root);
-				distinct.add(new equivalence(bag.get(root), root));
+				equivalence e = new equivalence(bag.get(root), root); 
+				distinct.add(e);
+				e.sets.add(bag.get(i));
+				
 			}
 			else
 			{
@@ -77,7 +82,7 @@ public class disjointedUnion {
 					if(e.indexOfRoot == root)
 					{
 						e.num++;
-						e.sets.add(bag.get(i));
+						e.sets.add(bag.get(i));				
 					}
 				}
 			}

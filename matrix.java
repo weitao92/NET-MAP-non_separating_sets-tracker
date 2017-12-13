@@ -32,7 +32,7 @@ public class matrix {
 			element e = bag[i];
 			int value1 = (basic[0][0] * e.value1 + basic[0][1] * e.value2) % e.module1;
 			int value2 = (basic[1][0] * e.value1 + basic[1][1] * e.value2) % e.module2;
-			element newOne = new element(e.module1, e.module1, value1, value2);
+			element newOne = new element(e.module1, e.module2, value1, value2);
 			newOne.operationThis(newOne, orderTwo);
 			newSet[i] = newOne;
 		}
