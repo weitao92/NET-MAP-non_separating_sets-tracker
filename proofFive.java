@@ -1,6 +1,11 @@
 import java.util.ArrayList;
 
-
+/**
+ * a minor program i wrote to help prove non-existence of nonseparating-sets in certain groups.
+ * 
+ * @author weitao92
+ *
+ */
 public class proofFive {
 	
 	public static void main(String agrs[])

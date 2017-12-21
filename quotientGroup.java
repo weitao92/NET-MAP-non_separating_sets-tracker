@@ -7,10 +7,8 @@ import java.util.Iterator;
  *
  */
 public class quotientGroup {
-	//group father;
 	int order;
 	ArrayList<coset> list;
-	//ArrayList<HashTable<element>> tables;
 	coset identity;
 	element a;
 	group H;
@@ -18,11 +16,9 @@ public class quotientGroup {
 	
 	public quotientGroup(group g, group h)
 	{
-		//father = g;
 		a = null;
 		this.H = h;
 		list = new ArrayList<coset> ();	
-		//tables = new ArrayList<HashTable<element>>();
 		order = g.order / h.order;
 		identity = new coset(h, h.list.get(0));
 		
@@ -45,7 +41,6 @@ public class quotientGroup {
 	public quotientGroup()
 	{
 		list = new ArrayList<coset>();
-		//tables = new ArrayList<HashTable<element>>();
 	}
 	
 	/**
@@ -96,27 +91,11 @@ public class quotientGroup {
 		{
 			list.removeAll(list);
 			list.add(0, identity);
-			/**
-			HashTable<element> first = new HashTable<element> ();
-			for(element elem : identity.list)
-			{
-				first.add(elem);
-			}
-			tables.add(0, first);
-			**/
 			element temp = new element(a.module1, a.module2, 0, 0);
 			for(int i = 1; i < order; i++)
 			{
 				temp = temp.operation(a, 1);
 				coset newOne = new coset(H, temp);
-				/**
-				HashTable<element> table = new HashTable<element>();
-				for(element e : newOne.list)
-				{
-					table.add(e);
-				}
-				tables.add(i, table);
-				**/
 				list.add(i, newOne);
 			}
 		}
@@ -186,15 +165,6 @@ public class quotientGroup {
 	}
 	
 	/**
-	public void sortCosets()
-	{
-		for(coset c : list)
-		{
-			c.sortList();
-		}
-	}
-	**/
-	/**
 	 * generate a list of quotientGroup which is identical with this one but
 	 * with different coset orders, basically i just find all coset which has order
 	 * of quotientGroup order and i pick one element a from that coset to generate a 
@@ -204,8 +174,6 @@ public class quotientGroup {
 	public ArrayList<quotientGroup> generate()
 	{
 		ArrayList<quotientGroup> groups = new ArrayList<quotientGroup>();
-		//this.sortCosets();
-		//groups.add(this);
 		ArrayList<element> candidateA = new ArrayList<element> ();
 		for(coset c : list)
 		{
@@ -213,7 +181,6 @@ public class quotientGroup {
 			{
 				Iterator<element> it = c.list.iterator();
 				element first = it.next();
-				//candidateA.add(c.list.get(0));
 				candidateA.add(first);
 			}
 		}
@@ -221,10 +188,8 @@ public class quotientGroup {
 		for(element e : candidateA)
 		{
 			quotientGroup G = new quotientGroup();
-			//G.father = null;
 			G.order = this.order;
 			G.H = this.H;
-			//G.identity = this.identity;
 	
 			G.a = e;
 			G.list.add(identity);
@@ -234,8 +199,6 @@ public class quotientGroup {
 				c = c.operation(e, 1);
 				G.list.add(c);
 			}
-			//G.update();
-			//G.sortCosets();
 			
 			groups.add(G);
 		}

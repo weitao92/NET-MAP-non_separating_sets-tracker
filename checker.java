@@ -1,6 +1,12 @@
 import java.util.ArrayList;
 
-
+/**
+ * resposible to coordinate several parts of program. Also if you want to check all the coset numbers
+ * of certain candidate set, see the comments in run method.
+ * 
+ * @author weitao92
+ *
+ */
 public class checker {
 	
 	ArrayList<non_separating_set> successful;
@@ -19,11 +25,9 @@ public class checker {
 	public void run(int x, int y, int mode)
 	{
 		group A = new group(x,y);
-		//group twoA = A.operation(2);
-		//quotientGroup ATWOA = new quotientGroup(A, twoA);
-		//System.out.println("i am here");
+		group twoA = A.operation(2);
+		quotientGroup ATWOA = new quotientGroup(A, twoA);
 		
-		/**
 		if(!ATWOA.isomorphic())
 		{
 			System.out.println("A/2A is not isomorphic to Z2 * Z2.");
@@ -31,7 +35,6 @@ public class checker {
 		}
 		else
 		{
-		**/
 			System.out.println("A/2A is isomorphic to Z2 * Z2, we can continue.");
 			
 			ArrayList<group> B = new ArrayList<group>();
@@ -39,7 +42,7 @@ public class checker {
 			
 			for(element b : A.list)
 			{
-				//if(b.order() == 16)
+				//if(b.order() == 8)
 				{
 					group gb = A.generate(b);
 								
@@ -69,17 +72,18 @@ public class checker {
 					}
 				}
 			}
-			
 			combination combo = new combination();
 			combo.generate(A, this, mode);
 			
+			//this part of code is for print coset number for certain candidate. uncomment this part
+			//if you try to test it.
 			/**
-			System.out.println("for H: (4,0),(5,0),(5,1),(6,1).");
+			System.out.println("for H: (0,1),(2,1),(4,1),(6,1).");
 			element[] sublist = new element[4];
-			sublist[0] = new element(8,2,0,0);
-			sublist[1] = new element(8,2,2,0);
-			sublist[2] = new element(8,2,2,1);
-			sublist[3] = new element(8,2,3,0);
+			sublist[0] = new element(8,4,0,1);
+			sublist[1] = new element(8,4,2,1);
+			sublist[2] = new element(8,4,4,1);
+			sublist[3] = new element(8,4,6,1);
 			
 			element h1 = sublist[0];
 			element ih1 = h1.inverse();
@@ -153,19 +157,19 @@ public class checker {
 					
 					doInsertionSort(insert);
 					
-					if(insert[2] != insert[1])
+					//if(insert[2] != insert[1])
 					{
-						System.out.println("B is: " + quotient.H + " " + " with a is: " + quotient.a
-								+ " "
-								+ insert[0] + " " + insert[1] + " "
-								+ insert[2] + " " + insert[3]);
-						break outMost;
+						System.out.println("$\\langle" + quotient.H.list.get(0) + "\\rangle$&$" + 
+					quotient.a + "+B$&$" + insert[0] + "," + insert[1] + "," + insert[2] + ","
+					+ insert[3] + "$\\\\");
+						System.out.println("\\hline");
+						
 					}
 				}
 			}
 			**/
 			//prove(x,y);	
-		//}
+		}
 	}
 	
 	public void prove(int x, int y)

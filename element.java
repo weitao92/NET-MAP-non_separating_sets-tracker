@@ -166,6 +166,9 @@ public class element implements Comparable<element>
 		}
 	}
 	
+	/**
+	 * generate hashcode for element.
+	 */
 	public int hashCode()
 	{
 		return value1 * 300 + 1 * value2;

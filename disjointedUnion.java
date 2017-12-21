@@ -1,7 +1,18 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
+/**
+ * this is the main classification class.
+ * If you want to see the classification of nonseparating_sets in certain groups. You need to change
+ * the type of map variable in this class. For example if you want to check z4*z8, then you need to change
+ * map to be type of mapping_48.
+ * 
+ * The logic is first generate all the automorphism inside group, then use automorphism and translate by an
+ * element of order 2 to put them into disjointedUnions(Hurwitz class).
+ * 
+ * @author weitao92
+ *
+ */
 public class disjointedUnion {
 	
 	static class equivalence
@@ -17,13 +28,12 @@ public class disjointedUnion {
 			this.root = root;
 			num = 1;
 			sets = new ArrayList<non_separating_set>();
-			//sets.add(root);
 		}
 	}
 
 	int[] union;
 	int size;
-	mapping_6 map;
+	mapping_48 map;
 	ArrayList<non_separating_set> bag;
 	ArrayList<equivalence> distinct;
 	
@@ -31,9 +41,8 @@ public class disjointedUnion {
 	{
 		distinct = new ArrayList<equivalence>();
 		this.bag = bag;
-		map = new mapping_6();
+		map = new mapping_48();
 		size = bag.size();
-		//sets = new non_separating_set[size];
 		union = new int[size];
 		Arrays.fill(union, -1);
 	}

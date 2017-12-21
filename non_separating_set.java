@@ -1,4 +1,9 @@
-
+/**
+ * represent a nonseparating_set. Used for classification.
+ * 
+ * @author weitao92
+ *
+ */
 public class non_separating_set {
 	
 	element[] set;
