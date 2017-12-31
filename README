@@ -3,3 +3,5 @@ build: javac *.java
 run: java test
 
 for details read comments in each class, especially test.java and disjointedUnion.java
+
+paper.tex and paper.pdf are LaTeX and PDF versions of final paper.
